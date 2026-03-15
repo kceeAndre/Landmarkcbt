@@ -12,7 +12,7 @@ function createWindow () {
     },
     icon: path.join(__dirname, 'favicon.ico')
   });
-
+  win.webContents.openDevTools();
   win.maximize();      // fullscreen
   win.loadFile('https://kceeandre.github.io/Landmarkcbt/'); // start with main page
   win.setMenu(null);   // hide menu bar
