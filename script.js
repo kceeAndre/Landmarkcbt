@@ -235,3 +235,10 @@ function showPopup(message){
   }, 3000);
 
 }
+function goBack(){
+    window.history.back();
+}
+function refreshPage(){
+    location.reload();
+}
+

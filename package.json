@@ -1,0 +1,14 @@
+{
+  "name": "landmark-cbt",
+  "version": "1.0.0",
+  "description": "CBT Portal for LANDMARK ACADEMY",
+  "main": "main.js",
+  "author": "Jephthah",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^25.0.0"
+  },
+  "scripts": {
+    "start": "electron ."
+  }
+}
