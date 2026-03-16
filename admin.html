@@ -13,13 +13,25 @@
 import { db } from "./firebase-config.js";
 import { ref, set } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-function testWrite() {
-  set(ref(db, "test/message"), {
-    text: "LANDMARK CBT Firebase is working"
-  });
-}
+window.saveExam = function(){
 
-testWrite();
+let pass=document.getElementById("examPassword").value;
+let time=document.getElementById("examTime").value;
+let enabled=document.getElementById("examEnable").checked;
+
+let settings={
+password:pass,
+time:time,
+enabled:enabled
+};
+
+set(ref(db,"examSettings/"+currentExam),settings)
+.then(()=>{
+alert("Exam settings saved");
+updateButtonColors();
+});
+
+}
 
 </script>
 <body>
@@ -138,8 +150,9 @@ testWrite();
 
 let currentExam="";
 
-
+import { ref, get } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 function openConfig(exam){
+  
 
 currentExam=exam;
 
@@ -147,7 +160,20 @@ document.getElementById("configBox").style.display="block";
 
 document.getElementById("examTitle").innerHTML=exam;
 
-let settings=JSON.parse(localStorage.getItem(exam));
+
+get(ref(db,"examSettings/"+exam)).then(snapshot=>{
+
+let settings=snapshot.val();
+
+if(settings){
+
+document.getElementById("examPassword").value=settings.password;
+document.getElementById("examTime").value=settings.time;
+document.getElementById("examEnable").checked=settings.enabled;
+
+}
+
+});
 
 if(settings){
 
@@ -181,20 +207,30 @@ localStorage.setItem(currentExam,JSON.stringify(settings));
 alert("Exam settings saved");
 
 }
+import { ref, get } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
 function updateButtonColors(){
 
-  let buttons=document.querySelectorAll(".adminGrid button");
+let buttons=document.querySelectorAll(".adminGrid button");
 
-  buttons.forEach(btn=>{
-    let examID = btn.getAttribute("data-exam"); // Use data-exam
-    let settings = JSON.parse(localStorage.getItem(examID));
+buttons.forEach(btn=>{
 
-    if(settings && settings.enabled){
-      btn.style.background="#28a745"; // Green
-    } else {
-      btn.style.background="#dc3545"; // Red
-    }
-  });
+let examID=btn.getAttribute("data-exam");
+
+get(ref(db,"examSettings/"+examID)).then(snapshot=>{
+
+let settings=snapshot.val();
+
+if(settings && settings.enabled){
+btn.style.background="#28a745";
+}
+else{
+btn.style.background="#dc3545";
+}
+
+});
+
+});
 
 }
 

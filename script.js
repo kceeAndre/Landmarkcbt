@@ -14,9 +14,32 @@ if(!localStorage.getItem("examPassword")){
 
 
 // START EXAM (store exam link)
+import { db } from "./firebase-config.js";
+import { ref, get } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 function startExam(link, examID){
 
-  let settings = JSON.parse(localStorage.getItem(examID));
+  
+
+function startExam(link, examID){
+
+get(ref(db,"examSettings/"+examID)).then(snapshot=>{
+
+let settings=snapshot.val();
+
+if(!settings || settings.enabled!==true){
+showPopup("Exam currently disabled");
+return;
+}
+
+sessionStorage.setItem("examLink",link);
+sessionStorage.setItem("examTime",settings.time*60);
+sessionStorage.setItem("examPassword",settings.password);
+
+window.location="exam.html";
+
+});
+
+}
 
   if(!settings || settings.enabled !== true){
     showPopup("Exam currently disabled");
