@@ -8,7 +8,20 @@
 <link rel="stylesheet" href="style.css">
 
 </head>
+<script type="module">
 
+import { db } from "./firebase-config.js";
+import { ref, set } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+function testWrite() {
+  set(ref(db, "test/message"), {
+    text: "LANDMARK CBT Firebase is working"
+  });
+}
+
+testWrite();
+
+</script>
 <body>
  
 <div class="adminControls">
