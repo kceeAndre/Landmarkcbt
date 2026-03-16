@@ -1,169 +1,244 @@
-javascript
-// -----------------------------
-// Firebase Import
-// -----------------------------
-import { db } from "./firebase-config.js";
-import { ref, get } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-// -----------------------------
-// START EXAM (on student clicking a subject)
-// -----------------------------
-window.startExam = function(link, examID) {
-    // Fetch exam settings from Firebase
-    get(ref(db, "examSettings/" + examID)).then(snapshot => {
-        let settings = snapshot.val();
+// Default settings
+if(!localStorage.getItem("examPassword")){
+localStorage.setItem("examPassword","1234");
+}
 
-        if (!settings || settings.enabled !== true) {
-            showPopup("Exam currently disabled");
-            return;
-        }
+if(!localStorage.getItem("examDuration")){
+localStorage.setItem("examDuration","40");
+}
+// Set default exam password if none exists
+if(!localStorage.getItem("examPassword")){
+    localStorage.setItem("examPassword","1234");
+}
 
-        // Store session data
-        sessionStorage.setItem("examLink", link);
-        sessionStorage.setItem("examTime", settings.time * 60);
-        sessionStorage.setItem("examPassword", settings.password);
 
-        // Go to exam page
-        window.location = "exam.html";
-    }).catch(err => {
-        console.error(err);
-        showPopup("Error fetching exam data");
-    });
-};
+// START EXAM (store exam link)
+function startExam(link, examID){
 
-// -----------------------------
+  let settings = JSON.parse(localStorage.getItem(examID));
+
+  if(!settings || settings.enabled !== true){
+    showPopup("Exam currently disabled");
+    return;
+  }
+
+  sessionStorage.setItem("examLink", link);
+  sessionStorage.setItem("examTime", settings.time * 60);
+  sessionStorage.setItem("examPassword", settings.password);
+
+  window.location = "exam.html";
+
+}
+
+
 // CHECK EXAM PASSWORD
-// -----------------------------
-window.checkPassword = function() {
-    let pass = document.getElementById("password").value;
-    let storedPass = sessionStorage.getItem("examPassword");
+function checkPassword(){
 
-    if (pass === storedPass) {
-        startCountdown();
-    } else {
-        alert("Incorrect password");
-    }
-};
+let pass=document.getElementById("password").value;
 
-// -----------------------------
+let storedPass=sessionStorage.getItem("examPassword");
+
+if(pass===storedPass){
+
+startCountdown();
+
+}
+
+else{
+
+alert("Incorrect password");
+
+}
+
+}
+
 // 10 SECOND COUNTDOWN BEFORE EXAM STARTS
-// -----------------------------
-window.startCountdown = function() {
+function startCountdown(){
+
     let seconds = 10;
-    let interval = setInterval(() => {
-        document.getElementById("count").innerHTML = "Exam starting in " + seconds;
+
+    let interval = setInterval(function(){
+
+        document.getElementById("count").innerHTML =
+        "Exam starting in " + seconds;
+
         seconds--;
 
-        if (seconds < 0) {
-            clearInterval(interval);
-            launchExam();
-        }
-    }, 1000);
-};
+        if(seconds < 0){
 
-// -----------------------------
+            clearInterval(interval);
+
+            launchExam();
+
+        }
+
+    },1000);
+
+}
+
+
 // LOAD EXAM PAGE
-// -----------------------------
-window.launchExam = function() {
+function launchExam(){
+
     document.getElementById("loginBox").style.display = "none";
     document.getElementById("examArea").style.display = "block";
 
     let link = sessionStorage.getItem("examLink");
+
     document.getElementById("examFrame").src = link;
 
     startTimer();
-};
 
-// -----------------------------
+}
+
+
 // MAIN EXAM TIMER
-// -----------------------------
-window.startTimer = function() {
-    let timer = parseInt(sessionStorage.getItem("examTime"));
+function startTimer(){
+
+    let timer = sessionStorage.getItem("examTime");
+
     let display = document.getElementById("timer");
 
-    let interval = setInterval(() => {
-        let minutes = Math.floor(timer / 60);
-        let seconds = timer % 60;
+    let interval = setInterval(function(){
 
-        minutes = minutes < 10 ? "0" + minutes : minutes;
-        seconds = seconds < 10 ? "0" + seconds : seconds;
+        let minutes = parseInt(timer / 60,10);
+        let seconds = parseInt(timer % 60,10);
+
+        minutes = minutes < 10 ? "0"+minutes : minutes;
+        seconds = seconds < 10 ? "0"+seconds : seconds;
 
         display.textContent = minutes + ":" + seconds;
 
-        if (timer === 300) alert("⚠ WARNING: 5 minutes remaining!");
-        if (timer === 60) alert("⚠ WARNING: 1 minute remaining!");
 
-        if (timer <= 0) {
+        // 5 minute warning
+        if(timer == 300){
+
+            alert("⚠ WARNING: 5 minutes remaining!");
+
+        }
+
+
+        // 1 minute warning
+        if(timer == 60){
+
+            alert("⚠ WARNING: 1 minute remaining!");
+
+        }
+
+
+        // TIME FINISHED
+        if(timer <= 0){
+
             clearInterval(interval);
+
             document.getElementById("timer").innerHTML = "00:00";
-            document.getElementById("timerBox").innerHTML = "TIME IS UP! Please scroll to the end and click SUBMIT.";
+
+            document.getElementById("timerBox").innerHTML =
+            "TIME IS UP! Please scroll to the end and click SUBMIT.";
+
             alert("Time is up! Please scroll down and submit your exam.");
+
             return;
+
         }
 
         timer--;
-    }, 1000);
-};
 
-// -----------------------------
-// ADMIN LOGIN OVERLAY
-// -----------------------------
-window.adminLogin = function() {
-    document.getElementById("adminOverlay").style.display = "flex";
-    document.getElementById("adminPassword").focus();
-};
+    },1000);
 
-window.closeAdmin = function() {
-    document.getElementById("adminOverlay").style.display = "none";
-    document.getElementById("adminError").innerHTML = "";
-    document.getElementById("adminPassword").value = "";
-};
+}
+// OPEN ADMIN LOGIN
+function adminLogin(){
 
-window.verifyAdmin = function() {
-    let pass = document.getElementById("adminPassword").value;
+document.getElementById("adminOverlay").style.display="flex";
 
-    if (pass === "Knightmare2026#") {
-        window.location = "admin.html";
-    } else {
-        let error = document.getElementById("adminError");
-        error.innerHTML = "Wrong Admin Password";
-        let box = document.getElementById("adminLoginBox");
-        box.classList.add("shake");
-        setTimeout(() => box.classList.remove("shake"), 500);
-    }
-};
+document.getElementById("adminPassword").focus();
+
+}
+
+
+// CLOSE ADMIN LOGIN
+function closeAdmin(){
+
+document.getElementById("adminOverlay").style.display="none";
+
+document.getElementById("adminError").innerHTML="";
+
+document.getElementById("adminPassword").value="";
+
+}
+
+
+// VERIFY ADMIN PASSWORD
+function verifyAdmin(){
+
+let pass=document.getElementById("adminPassword").value;
+
+if(pass==="Knightmare2026#"){
+
+window.location="admin.html";
+
+}
+
+else{
+
+let error=document.getElementById("adminError");
+
+error.innerHTML="Wrong Admin Password";
+
+let box=document.getElementById("adminLoginBox");
+
+box.classList.add("shake");
+
+setTimeout(function(){
+
+box.classList.remove("shake");
+
+},500);
+
+}
+
+}
+
 
 // PRESS ENTER TO LOGIN
-document.addEventListener("keydown", (event) => {
-    if (event.key === "Enter") {
-        if (document.getElementById("adminOverlay").style.display === "flex") {
-            verifyAdmin();
-        }
-    }
+document.addEventListener("keydown",function(event){
+
+if(event.key==="Enter"){
+
+if(document.getElementById("adminOverlay").style.display==="flex"){
+
+verifyAdmin();
+
+}
+
+}
+
 });
+function showPopup(message){
 
-// -----------------------------
-// CUSTOM POPUP
-// -----------------------------
-window.showPopup = function(message) {
-    let old = document.getElementById("customPopup");
-    if (old) old.remove();
+  // Remove old popup if exists
+  let old = document.getElementById("customPopup");
+  if(old) old.remove();
 
-    let popup = document.createElement("div");
-    popup.id = "customPopup";
-    popup.innerHTML = message;
-    document.body.appendChild(popup);
+  // Create popup container
+  let popup = document.createElement("div");
+  popup.id = "customPopup";
+  popup.innerHTML = message;
 
-    setTimeout(() => popup.remove(), 3000);
-};
+  document.body.appendChild(popup);
 
-// -----------------------------
-// UTILITY FUNCTIONS
-// -----------------------------
-window.goBack = function() {
+  // Show and remove after 3 seconds
+  setTimeout(()=>{
+    popup.remove();
+  }, 3000);
+
+}
+function goBack(){
     window.history.back();
-};
-
-window.refreshPage = function() {
+}
+function refreshPage(){
     location.reload();
-};
+}
+

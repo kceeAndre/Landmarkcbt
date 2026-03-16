@@ -1,44 +1,49 @@
-
 <!DOCTYPE html>
-<html lang="en">
-
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>LANDMARK ACADEMY CBT</title>
     <link rel="icon" type="image/png" href="landmark.png">
-    <link rel="stylesheet" href="style.css">
+<title>LANDMARK ACADEMY CBT</title>
+<link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-    <!-- Admin Login Button -->
-    <button onclick="window.adminLogin()" class="adminBtn">Admin Login</button>
+<button onclick="adminLogin()" class="adminBtn">Admin Login</button>
+<<div id="adminOverlay" class="adminOverlay" style="display:none;">
 
-    <!-- Admin Login Overlay -->
-    <div id="adminOverlay" class="adminOverlay" style="display:none;">
-        <div id="adminLoginBox" class="adminLoginBox">
-            <h3>Admin Login</h3>
-            <input type="password" id="adminPassword" placeholder="Enter Admin Password">
-            <br><br>
-            <button onclick="window.verifyAdmin()">Login</button>
-            <button onclick="window.closeAdmin()">Cancel</button>
-            <p id="adminError" class="errorText"></p>
-        </div>
-    </div>
+<div id="adminLoginBox" class="adminLoginBox">
 
-    <div class="container">
-        <img src="logo.jpg" class="logo">
-        <h1>LANDMARK ACADEMY</h1>
-        <h2>CBT EXAMINATION PORTAL</h2>
+<h3>Admin Login</h3>
 
-        <!-- Grade Links -->
-        <div class="grid">
-            <a href="jss3.html" class="card">JSS3</a>
-            <a href="sss1.html" class="card">SSS1</a>
-            <a href="sss2.html" class="card">SSS2</a>
-        </div>
-    </div>
+<input type="password" id="adminPassword" placeholder="Enter Admin Password">
 
-    <!-- Script loaded as a module -->
-    <script type="module" src="script.js"></script>
+<br><br>
+
+<button onclick="verifyAdmin()">Login</button>
+<button onclick="closeAdmin()">Cancel</button>
+
+<p id="adminError" class="errorText"></p>
+
+</div>
+
+</div>
+<div class="container">
+    
+
+<img src="logo.jpg" class="logo">
+
+<h1>LANDMARK ACADEMY</h1>
+<h2>CBT EXAMINATION PORTAL</h2>
+
+<div class="grid">
+
+<a href="jss3.html" class="card">JSS3</a>
+<a href="sss1.html" class="card">SSS1</a>
+<a href="sss2.html" class="card">SSS2</a>
+
+</div>
+
+</div>
+
 </body>
 </html>
+<script src="script.js"></script>
